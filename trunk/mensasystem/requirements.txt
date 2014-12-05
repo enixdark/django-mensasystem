@@ -1,0 +1,7 @@
+django==1.7 
+django-contact-form==1.0
+requests==2.2
+django-cronjobs==0.2.3
+django_countries==2.1.2
+python-dateutil==2.2
+netifaces==0.10.4

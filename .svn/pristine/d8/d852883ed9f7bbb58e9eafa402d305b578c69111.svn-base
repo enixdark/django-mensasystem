@@ -1,0 +1,242 @@
+
+{% extends 'base.html' %}
+
+{% block rightcontent %}
+
+
+
+
+    <noscript>
+        <div class="alert alert-block span10">
+            <h4 class="alert-heading">Warning!</h4>
+            <p>You need to have <a href="http://en.wikipedia.org/wiki/JavaScript" target="_blank">JavaScript</a> enabled to use this site.</p>
+        </div>
+    </noscript>
+
+    <!-- start: Content -->
+    <div id="content" class="span10">
+
+
+    <ul class="breadcrumb">
+        <li>
+            <i class="icon-home"></i>
+            <a href="/">Home</a>
+            <i class="icon-angle-right"></i>
+        </li>
+        <li><a href="/manage/mensasystem/task/">Manage Task</a></li>
+    </ul>
+
+    <div class="info">
+    {% if action == 'add'  %}
+    <p style="color: darkgray;font-size: 30px">
+            <span class="icon-ok"></span> The task "Task object" was added successfully.
+     </p>
+    {% elif action == 'edit' %}
+    <p style="color: darkgray;font-size: 30px">
+            <span class="icon-ok"></span> The task "Task object" was edited successfully.
+    </p>
+    {% elif action == 'delete' %}
+    <p style="color: darkgray;font-size: 30px">
+            <span class="icon-ok"></span> The task "Task object" was removed successfully.
+    </p>
+    {%  endif %}
+
+    </div>
+
+    <div class="row-fluid sortable">
+
+    <div class="box span12">
+
+    <div class="box-header" data-original-title>
+        <h2><i class="halflings-icon user"></i><span class="break"></span>Tasks</h2>
+        <div class="box-icon">
+              <a href="/manage/mensasystem/task/add/" class="btn-setting"><i class="icon-plus wrench"></i></a>
+
+{#            <a href="#" class="btn-setting"><i class="halflings-icon wrench"></i></a>#}
+{#            <a href="#" class="btn-minimize"><i class="halflings-icon chevron-up"></i></a>#}
+{#            <a href="#" class="btn-close"><i class="halflings-icon remove"></i></a>#}
+        </div>
+    </div>
+
+    <div class="box-content">
+
+    <table class="table table-striped table-bordered bootstrap-datatable datatable">
+    <thead>
+    <tr>
+
+        <th>Name</th>
+        <th>project</th>
+        <th>Description</th>
+        <th>ActualStartTime</th>
+        <th>ActualEndTime</th>
+	<th>PlanEndTime</th>
+	<th>Status</th>
+	<th>User</th>
+    <th>Action</th>
+
+    </tr>
+    </thead>
+    <tbody>
+    {% for task in data %}
+    <tr>
+        <td name="name">{{ task.name }}</td>
+        <td class="center" name="project">{{ task.project.name }}</td>
+        <td class="center" name="description">{{ task.description }}</td>
+        <td class="center" name="actualStartTime">{{ task.actualStartTime|date:"f" }}</td>
+        <td class="center" name="actualEndTime">{{ task.actualEndTime|date:"f" }}</td>
+        <td class="center" name="planStartTime">{{ task.planStartTime|date:"d/m/Y" }}</td>
+        <td class="center" name="planEndTime">{{ task.planEndTime|date:"d/m/Y" }}</td>
+        <td class="center" name="status">{{ task.status }}</td>
+        <td class="center" name="username">{{ task.user.name }}</td>
+
+{#        <td class="center">#}
+{#            <span class="label label-success">Active</span>#}
+{#        </td>#}
+        <td class="center">
+{#            <a class="btn btn-success" href="#">#}
+{#                <i class="halflings-icon white zoom-in"></i>#}
+{#            </a>#}
+            <a class="btn btn-info" href="/manage/mensasystem/task/edit/{{ task.id }}/">
+                <i class="halflings-icon white edit"></i>
+            </a>
+{#            <a class="btn btn-danger" href="#">#}
+{#                <i class="halflings-icon white trash"></i>#}
+{#            </a>#}
+              <form id="{{ task.id }}" name="{{ task.id }}" method="POST" action="/manage/mensasystem/task/delete/{{ task.id }}/" accept-charset="UTF-8" style="display:inline">
+                {% csrf_token %}
+                <button id="{{ task.id }}" class="btn btn-danger delete" type="button" data-toggle="modal" data-target="#confirmDelete" data-title="Delete User" data-message="Are you sure you want to delete this user ?">
+                    <i class="halflings-icon white trash"></i>
+                </button>
+
+              </form>
+        </td>
+    </tr>
+    {% endfor %}
+
+    </tbody>
+    </table>
+    </div>
+    </div><!--/span-->
+
+    </div><!--/row-->
+
+
+
+
+    </div><!--/.fluid-container-->
+
+    <!-- end: Content -->
+    </div><!--/#content.span10-->
+    </div><!--/fluid-row-->
+
+     <div class="modal fade" id="confirmDelete" role="dialog" aria-labelledby="confirmDeleteLabel" aria-hidden="true">
+                    	  <div class="modal-dialog">
+                    	    <div class="modal-content">
+                    	      <div class="modal-header">
+                    	        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    	        <h4 class="modal-title">Delete Parmanently</h4>
+                    	      </div>
+                    	      <div class="modal-body">
+                    	        <p>Are you sure about this ?</p>
+                          </div>
+                    	      <div class="modal-footer">
+                    	        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                    	        <button type="button" class="btn btn-danger" id="confirm">Delete</button>
+{#                              <form method="POST" action="manage/mensasystem/delete/{{ data.task.id }}/" accept-charset="UTF-8" style="display:inline">#}
+{#                                      <button class="btn btn-xs btn-danger" type="button" data-toggle="modal" data-target="#confirmDelete" data-title="Delete User" data-message="Are you sure you want to delete this user ?">#}
+{#                                          <i class="glyphicon glyphicon-trash"></i> Delete#}
+{#                                      </button>#}
+{#                              </form>#}
+
+                              </div>
+                    	    </div>
+
+{%  endblock %}
+{%  block script %}
+    <!-- start: JavaScript-->
+    {% load static %}
+    <<script src="{% static 'js/jquery-1.9.1.min.js'%}"></script>
+    <script src="{% static 'js/jquery-migrate-1.0.0.min.js'%}"></script>
+
+    <script src="{% static 'js/jquery-ui-1.10.0.custom.min.js'%}"></script>
+
+    <script src="{% static 'js/jquery.ui.touch-punch.js'%}"></script>
+
+    <script src="{% static 'js/modernizr.js'%}"></script>
+
+    <script src="{% static 'js/bootstrap.min.js'%}"></script>
+
+    <script src="{% static 'js/jquery.cookie.js'%}"></script>
+
+    <script src="{% static 'js/fullcalendar.min.js'%}"></script>
+
+    <script src="{% static 'js/jquery.dataTables.min.js'%}"></script>
+
+    <script src="{% static 'js/excanvas.js'%}"></script>
+    <script src="{% static 'js/jquery.flot.js'%}"></script>
+    <script src="{% static 'js/jquery.flot.pie.js'%}"></script>
+    <script src="{% static 'js/jquery.flot.stack.js'%}"></script>
+    <script src="{% static 'js/jquery.flot.resize.min.js'%}"></script>
+
+    <script src="{% static 'js/jquery.chosen.min.js'%}"></script>
+
+    <script src="{% static 'js/jquery.uniform.min.js'%}"></script>
+
+    <script src="{% static 'js/jquery.cleditor.min.js'%}"></script>
+
+    <script src="{% static 'js/jquery.noty.js'%}"></script>
+
+    <script src="{% static 'js/jquery.elfinder.min.js'%}"></script>
+
+    <script src="{% static 'js/jquery.raty.min.js'%}"></script>
+
+    <script src="{% static 'js/jquery.iphone.toggle.js'%}"></script>
+
+    <script src="{% static 'js/jquery.uploadify-3.1.min.js'%}"></script>
+
+    <script src="{% static 'js/jquery.gritter.min.js'%}"></script>
+
+    <script src="{% static 'js/jquery.imagesloaded.js'%}"></script>
+
+    <script src="{% static 'js/jquery.masonry.min.js'%}"></script>
+
+    <script src="{% static 'js/jquery.knob.modified.js'%}"></script>
+
+    <script src="{% static 'js/jquery.sparkline.min.js'%}"></script>
+
+    <script src="{% static 'js/counter.js'%}"></script>
+
+    <script src="{% static 'js/retina.js'%}"></script>
+
+    <script src="{% static 'js/custom.js'%}"></script>
+    <!-- end: JavaScript-->
+    <script>
+
+     $(document).ready(function() {
+         $('#t').clockface();
+     });
+   </script>
+     <!-- Dialog show event handler -->
+    <script type="text/javascript">
+      var $id = '';
+      $('.delete').on('click',function(){
+            $id= this.id;
+      });
+      $('#confirmDelete').on('show.bs.modal', function (e) {
+          $message = $(e.relatedTarget).attr('data-message');
+          $(this).find('.modal-body p').text($message);
+          $title = $(e.relatedTarget).attr('data-title');
+          $(this).find('.modal-title').text($title);
+
+          // Pass form reference to modal for submission on yes/ok
+          var form = $(e.relatedTarget).closest('form');
+          $(this).find('.modal-footer #confirm').data('form', form);
+      });
+
+
+      $('#confirmDelete').find('.modal-footer #confirm').on('click', function(){
+          var x = $('form')//$(this).data('form')
+          alert(x.id);
+      });
+    </script>
+{% endblock %}

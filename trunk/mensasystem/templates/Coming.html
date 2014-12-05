@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta name="description" content="">
+	<meta name="author" content="">
+
+	<title>Cortes - Coming Soon Template</title>
+
+	<!-- CSS -->
+	<!-- Bootstrap core CSS -->
+	{% load static %}
+	<link href="{% static 'css/time_css/bootstrap.css'%}" rel="stylesheet" media="screen">
+
+	<!-- Font Awesome CSS -->
+	<link href="{% static 'css/time_css/font-awesome.css'%}" rel="stylesheet" media="screen">
+
+	<!-- Animate css -->
+	<link href="{% static 'css/time_css/animate.css'%}" rel="stylesheet">
+
+	<!-- Custom styles CSS -->
+	<link href="{% static 'css/time_css/style.css'%}" rel="stylesheet" media="screen">
+
+</head>
+<body style="overflow: visible;">
+
+	<!-- Preloader -->
+
+	<div style="display: none;" id="preloader">
+		<div style="display: none;" id="status"></div>
+	</div>
+
+	<!-- Intro section start -->
+
+	<section class="intro">
+		<div class="container">
+			<div class="row">
+				<div class="col-md-12">
+
+					<div class="i_header">
+						<div class="logo">
+							<img src="{% static 'img/time_img/logo.png' %}" alt="">
+						</div>
+						<h1>Mensa System</h1>
+
+					</div>
+				
+{#					<div class="i_cicle">#}
+{#						<!-- Timer: Your date here -->#}
+{#						<div data-tc-id="f08d1e55-134c-7eb9-e3e7-ab5f007b3e52" class="countdown-time animated bounceIn" data-date="2015-01-01 00:00:00" data-timer="100">#}
+{#                            <div class="time_circles">#}
+{#                           <canvas height="195" width="590">#}
+{##}
+{#                            </canvas>#}
+{#                                <div style="top: 68px; left: 195px; width: 195px;" class="textDiv_Hours">#}
+{#                                    <h4 style="font-size: 14px; line-height: 14px;">Hours#}
+{#                                </h4>#}
+{#                                    <span style="font-size: 41px; line-height: 14px;">8</span>#}
+{#                                </div>#}
+{##}
+{#                                <div style="top: 68px; left: 390px; width: 195px;" class="textDiv_Minutes">#}
+{#                                    <h4 style="font-size: 14px; line-height: 14px;">Minutes</h4>#}
+{#                                    <span style="font-size: 41px; line-height: 14px;">55</span>#}
+{#                                </div><div style="top: 68px; left: 585px; width: 195px;" class="textDiv_Seconds">#}
+{#                                    <h4 style="font-size: 14px; line-height: 14px;">Seconds</h4>#}
+{#                                    <span style="font-size: 41px; line-height: 14px;">28</span></div>#}
+{#                            </div>#}
+{#                        </div>#}
+{#					</div>#}
+
+                    <form action="" method="POST" name="checkin">
+                    {% csrf_token %}
+                    <div id="demo">
+
+                    </div>
+                    </form>
+                    <div class="i_header">
+                        <br>
+                        <br>
+                        <br>
+                        <br>
+                        <br>
+                        <br>
+					</div>
+				</div>
+			</div>
+		</div>
+
+	<!-- Intro section end -->
+
+	<!-- About section start -->
+
+
+
+	<!-- Footer end -->
+
+	<!-- Javascript files -->
+	<!-- jQuery -->
+	<script src="{% static 'js/time_js/jquery-1.js'%}"></script>
+	<!-- Bootstrap JS -->
+	<script src="{% static 'js/time_js/bootstrap.js'%}"></script>
+	<!-- Background slider -->
+	<script src="{% static 'js/time_js/jquery.js'%}"></script>
+	<!-- Count Down - Time Circles  -->
+	<script src="{% static 'js/time_js/TimeCircles.js'%}"></script>
+	<!-- WOW - Reveal Animations When You Scroll -->
+	<script src="{% static 'js/time_js/wow.js'%}"></script>   
+	<!-- Smooth scroll -->
+	<script src="{% static 'js/time_js/smoothscroll.js'%}"></script>
+	<!-- Custom scripts -->
+	<script src="{% static 'js/time_js/custom.js'%}"></script>
+    {% load timesheet_filter %}
+
+    <script>
+
+    var myVar=setInterval(function(){myTimer()},1000);
+
+    function myTimer() {
+        {{ user_time.check_in|get_text:user_time.check_out|safe }};
+    }
+    </script>
+
+<div style="left: 0px; top: 0px; overflow: hidden; margin: 0px; padding: 0px; z-index: -999999; position: fixed; width: 1354px; height: 630px;" class="backstretch">
+    <img src="{% static 'img/time_img/bg3.jpg'%}" style="position: absolute; margin: 0px; padding: 0px; border: medium none; max-height: none; max-width: none; z-index: -999999; width: 1354px; height: 759.509px; left: 0px; top: -64.7547px;">
+    </div>
+</body>
+</html>

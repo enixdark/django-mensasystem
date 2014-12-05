@@ -1,0 +1,369 @@
+from django.shortcuts import render_to_response,render,HttpResponseRedirect,Http404,HttpResponse,RequestContext,redirect
+from django.contrib import auth
+from django.contrib.auth.models import User
+from django.views.decorators.cache import cache_page
+from django.db import models
+# Create your views here.
+from mensa_app.forms import UserForm,UserProfileForm
+from django.template import Template,loader, Context
+from django.views.decorators.csrf import csrf_exempt, csrf_protect
+from django.contrib.auth.decorators import login_required,permission_required
+from mensa_app.models import *
+from django.core.paginator import Paginator
+from dateutil import parser
+import smtplib
+from django.db import load_backend
+import mensa.settings
+from django.conf import settings
+from system.ip import get_ip
+from system.models import SystemIP
+
+
+def adminlogin(request,next='admin/login/'):
+    if not request.user.is_superuser:
+        HttpResponseRedirect(next)
+    return HttpResponseRedirect('/admin/')
+
+def ChangeUser(request,profile_id):
+
+    if request.method=='POST':
+        users = User.objects.get(pk=profile_id)
+        UserForm(data=users)
+        context = RequestContext(request)
+        context_dict = {}
+        change = False
+        user_form = UserForm(data=request.POST)
+        profile_form = UserProfileForm(data=request.POST)
+
+        if user_form.is_valid() and profile_form.is_valid():
+            users.set_password(request.POST['password'])
+            users.first_name = request.POST['first_name']
+            users.last_name = request.POST['last_name']
+            users.userprofile.address = request.POST['address']
+            users.userprofile.mobile_phone = request.POST['mobile']
+            users.save()
+            change = True
+            context_dict['success'] = True
+        else:
+            user_form = UserForm()
+            profile_form = UserProfileForm()
+
+        return render_to_response('user/profile.html', {'data':context_dict}, context)
+
+
+
+def time(request):
+    import requests,datetime
+    time = requests.get("http://developer.yahooapis.com/TimeService/V1/getTime?appid=YahooDemo&output=json")
+    # k = datetime.datetime(m)
+    time = time.json()['Result']['Timestamp']
+
+    return render_to_response('times.html',{'time':time},context_instance=RequestContext(request))
+
+
+def home(request):
+    #render a main/home page
+    print '==========================================='
+    print request.user
+    return render_to_response("index.html",{'user':request.user},context_instance=RequestContext(request))
+
+
+# def checkout(request):
+#     if request.method == 'POST':
+#         username = request.POST.get('user', '')
+#         password = request.POST.get('pass', '')
+#         user = auth.authenticate(username=username, password=password)
+#         if user is not None:
+#             auth.login(request, user)
+#     return render_to_response('checklog.html', {'user': request.user}, context_instance=RequestContext(request))
+
+
+
+def login(request):
+    if not request.user.is_anonymous:
+        return HttpResponseRedirect('/home/')
+    return render_to_response('login.html',{'user':request.user},context_instance=RequestContext(request))
+
+
+def logout(request):
+    auth.logout(request)
+    return home(request)
+
+@login_required
+def profile(request,profile_id):
+    def popitem(data,*args):
+        for item in args:
+            data.fields.pop(item)
+
+    if request.method == 'GET':
+        if unicode(request.user.id) != profile_id:
+            raise Http404
+    db = User.objects.get(pk=profile_id)
+    time = db.usertimesheet_set.all().order_by('-working_date')[:6]
+
+    if request.method == 'POST':
+        db.first_name = request.POST['firstname']
+        db.last_name = request.POST['lastname']
+        try:
+            db.userprofile.mobile = request.POST['mobile']
+        except :
+            db.userprofile = UserProfile()
+            db.userprofile.mobile = request.POST['mobile']
+        db.userprofile.phone = request.POST['phone']
+        db.userprofile.department = request.POST['department']
+        db.userprofile.position = request.POST['position']
+        db.userprofile.skype = request.POST['skype']
+
+        db.userprofile.save()
+        db.save()
+    return render_to_response('user/profile.html',{'user':request.user,'data':db,'time':time},context_instance=RequestContext(request))
+
+
+@login_required
+def result(request,profile_id):
+    def popitem(data,*args):
+        for item in args:
+            data.fields.pop(item)
+
+    if request.method == 'GET':
+        if unicode(request.user.id) != profile_id:
+            raise Http404
+    db = User.objects.get(pk=profile_id)
+
+    working = db.timeworking_set.all()
+    time =  db.usertimesheet_set.all()
+    d = []
+
+    for i in working:
+        d.append({
+                'title':'%s' % str(i.state),
+                'start':str(i.working_date)
+        })
+
+    for p in time:
+        if p.check_in:
+            d.append({
+                'title':'CheckIn in %s' % p.check_in,
+                'start':'%s' % str(p.working_date)
+
+            })
+        if p.check_out:
+            d.append({
+                'title':'CheckOut in %s' % p.check_out,
+                'start':'%s' % str(p.working_date)
+            })
+    return render_to_response('user/result.html',{'user':request.user,'data':db,'time':d},context_instance=RequestContext(request))
+
+
+
+
+
+def register(request):
+    context = RequestContext(request)
+    context_dict = {}
+    registered = False
+
+    if request.method == 'POST':
+        user_form = UserForm(data=request.POST)
+        profile_form = UserProfileForm(data=request.POST)
+        if user_form.is_valid() and profile_form.is_valid():
+            user = user_form.save()
+            user.set_password(user.password)
+            user.save()
+            profile = profile_form.save(commit=False)
+            profile.user = user
+            profile.save()
+            registered = True
+
+        else:
+            print user_form.errors, profile_form.errors
+
+    else:
+        user_form = UserForm()
+        profile_form = UserProfileForm()
+
+    context_dict['user_form'] = user_form
+    context_dict['profile_form']= profile_form
+    context_dict['registered'] = registered
+    # Render and return!
+    return render_to_response(
+        'register.html',
+        context_dict,
+        context)
+
+
+"""
+
+"""
+
+@login_required
+def manage_project(request):
+    return render_to_response('manage/manage_project.html',{'user':request.user})
+
+def manage_project_data(request):
+
+    data = Project.objects.all()
+    action = {}
+    if request.method == 'POST':
+        action = request.session.get('action')
+        del request.session['action']
+        if action in ['add','edit']:
+            project_data_obj = Task() if action == 'add' else Project.objects.get(pk=request.session['id'])
+            project_data_obj.name = request.POST['name']
+            project_data_obj.description = request.POST['description']
+            project_data_obj.actualStartTime = parser.parse(request.POST['actualStartTime'])
+            project_data_obj.actualEndTime = parser.parse(request.POST['actualEndTime'])
+            project_data_obj.planStartTime = parser.parse(request.POST['planStartTime'])
+            project_data_obj.planEndTime = parser.parse(request.POST['planEndTime'])
+            project_data_obj.save()
+
+    return render_to_response('manage/manage_project_data.html',{'data':data,'user':request.user,'action':action},
+                               context_instance=RequestContext(request))
+
+
+@login_required
+def manage_project_data_add(request):
+    request.session['action'] = 'add'
+    return render_to_response('manage/manage_project_data_action.html',{'user':request.user},context_instance=RequestContext(request))
+
+@login_required
+def manage_project_data_edit(request,project_id):
+    data = {}
+    request.session['action'] = 'edit'
+    request.session['id'] = project_id
+    data['project'] =  Project.objects.get(pk=project_id)
+    return render_to_response('manage/manage_project_data_action.html',{'data':data,'user':request.user},
+                              context_instance=RequestContext(request))
+
+@login_required
+def manage_project_data_delete(request,taskid):
+    request.session['action'] = 'delete'
+    data =  Task.objects.get(pk=taskid)
+    data.delete()
+
+    return HttpResponseRedirect('/manage/mensasystem/task/')
+
+
+############################################################################################################
+"""
+"""
+@login_required
+def manage_task(request):
+
+    data = Task.objects.all()
+    action = {}
+    if request.method == 'POST':
+        action = request.session.get('action')
+        del request.session['action']
+        if action in ['add','edit']:
+            task_obj = Task() if action == 'add' else Task.objects.get(pk=request.session['id'])
+            task_obj.name = request.POST['name']
+            task_obj.project_id = request.POST['project']
+            task_obj.description = request.POST['description']
+
+            task_obj.actualStartTime = parser.parse(request.POST['actualStartTime'])
+            task_obj.actualEndTime = parser.parse(request.POST['actualEndTime'])
+
+            task_obj.planStartTime = parser.parse(request.POST['planStartTime'])
+            task_obj.planEndTime = parser.parse(request.POST['planEndTime'])
+            task_obj.user_id =  request.POST['user']
+            task_obj.save()
+
+    return render_to_response('manage/manage_task.html',{'data':data,'user':request.user,'action':action},
+                               context_instance=RequestContext(request))
+
+@login_required
+def manage_task_add(request):
+    data = {}
+
+    data['user'] =  User.objects.all()
+    data['project'] = Project.objects.all()
+    request.session['action'] = 'add'
+    return render_to_response('manage/manage_task_action.html',{'user':request.user,'data':data},context_instance=RequestContext(request))
+
+@login_required
+def manage_task_edit(request,taskid):
+    data = {}
+    request.session['action'] = 'edit'
+    request.session['id'] = taskid
+    data['task'] =  Task.objects.get(pk=taskid)
+    data['user'] =  User.objects.all()
+    data['project'] = Project.objects.all()
+    return render_to_response('manage/manage_task_action.html',{'data':data,'user':request.user},
+                              context_instance=RequestContext(request))
+
+@login_required
+def manage_task_delete(request,taskid):
+    request.session['action'] = 'delete'
+    data =  Task.objects.get(pk=taskid)
+    data.delete()
+
+    return HttpResponseRedirect('/manage/mensasystem/task/')
+
+
+def checkout(request, next=None):
+    """
+    Authenticate & log user in
+    """
+    def checkip(ips,start,end):
+        if start == '' and end == '':
+            return True
+        begin_ip = start.split('.')[:-1]
+        start_ip = start.split('.')[-1]
+        end_ip = end.split('.')[-1]
+        list_range = set({ '.'.join(begin_ip) + '.' + str(i) for i in range(int(start_ip),int(end_ip))})
+        return len(set(ips) & list_range) > 0
+
+
+    user = None
+    next = request.REQUEST.get("next", "") or "/home/"
+    if request.user.is_active:
+        return HttpResponseRedirect(next)
+
+    if request.method == 'POST':
+        try:
+
+            check_ip = True
+            try:
+                ips = get_ip()
+                IPs = SystemIP.objects.all()[0]
+                check_ip = checkip(ips,IPs.start_ip,IPs.end_ip)
+            except SystemIP.DoesNotExist:
+                pass
+            except IndexError:
+                pass  
+
+            if check_ip:
+                username = str(request.POST['user'].strip())
+                userpwd = str(request.POST['pass'].strip())
+                username = username.lower()
+                check_mail = User.objects.get(email=username)
+                if settings.EMAIL_USE_TLS:
+                    server = smtplib.SMTP(settings.EMAIL_HOST,settings.EMAIL_PORT)
+                    server.ehlo()
+                    server.starttls()
+                    server.ehlo()
+                    server.login(username, userpwd)
+                    server.quit()
+                    if check_mail.is_active:
+                        check_mail.backend = 'django.contrib.auth.backends.ModelBackend'
+                        auth.login(request,check_mail)
+
+                        return HttpResponseRedirect(next)
+                    else:
+                        error = "your accounts's incorrect , please contact "
+                        raise models.ObjectDoesNotExist()   # except:
+
+            
+                                           #     passwords
+        except models.ObjectDoesNotExist:
+            pass
+        except smtplib.SMTPAuthenticationError:
+            pass
+
+    return render_to_response('checklog.html', {'user':request.user,'username': request.POST.get('username','')
+    },context_instance= RequestContext(request))
+
+
+def timechart(request):
+    return render_to_response('timechart.html')

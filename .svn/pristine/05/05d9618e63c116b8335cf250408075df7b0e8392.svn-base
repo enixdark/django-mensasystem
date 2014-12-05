@@ -1,0 +1,4 @@
+#!usr/bin/bash
+
+. ~/mensasystem/bin/activate
+python `pwd`/manage.py cron cron_user

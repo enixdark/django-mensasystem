@@ -1,0 +1,27 @@
+{% load admin_list %}
+{% load i18n %}
+
+{% load admin_list %}
+{% load i18n %}
+
+{% if pagination_required %}
+<div class="dataTables_paginate paging_bootstrap pagination pagination-centered">
+    <ul>
+    <li class="prev disabled"><a href="#">← Previous</a></li>
+    {% for i in page_range %}
+        {% if i == "." %}
+            <li><span>{% paginator_number cl i %}</span></li>
+        {% else %}
+            <li>{% paginator_number cl i %}</li>
+        {% endif %}
+    {% endfor %}
+    <li><a href="#">Next → </a></li>
+    <br>
+    <br>
+
+    <p>
+        {{ cl.result_count }} {% ifequal cl.result_count 1 %}{{ cl.opts.verbose_name }}{% else %}{{ cl.opts.verbose_name_plural }}{% endifequal %}
+        {% if show_all_url %}&nbsp;&nbsp;<a href="{{ show_all_url }}" class="showall">{% trans 'Show all' %}</a>{% endif %}
+    </p>
+</div>
+{% endif %}

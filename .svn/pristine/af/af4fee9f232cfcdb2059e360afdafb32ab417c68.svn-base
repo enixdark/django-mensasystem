@@ -1,0 +1,216 @@
+{% extends 'base.html' %}
+
+{%  block rightcontent %}
+<body>
+
+		<div class="container-fluid-full">
+		<div class="row-fluid">
+				
+
+
+
+
+			
+			<!-- start: Content -->
+			<div id="content" class="span10">
+			
+						
+			<ul class="breadcrumb">
+				<li>
+					<i class="icon-home"></i>
+					<a href="/">Home</a>
+					<i class="icon-angle-right"></i>
+				</li>
+				<li><a href="/profile/{{ data.id }}">Profile</a></li>
+			</ul>
+
+			<div class="row-fluid">
+                <form action="/profile/{{ data.id }}/" method="post">
+                    {% csrf_token %}
+				<div class="span6">
+					<h1>Profile</h1>
+					
+					<div class="priority high">
+                            <span>Information</span>
+                    </div>
+					<div class="task high">
+						<div class="desc">
+							<div class="title">Name</div>
+							<div>
+                                <div class="row-fluid">
+                                 <input placeholder="First Name" id="firstname" name="firstname" type="text" id="inputWarning" value="{{ data.first_name }}">
+                                 <input placeholder="Last Name" id="lastname" name="lastname" type="text" id="inputWarning" value="{{ data.last_name }}">
+                                </div>
+                            </div>
+						</div>
+					</div>
+
+                    <div class="task high">
+						<div class="desc">
+							<div class="title">Email </div>
+							<div>
+                                {{ data.email }}
+                            </div>
+						</div>
+					</div>
+
+					<div class="task high">
+						<div class="desc">
+							<div class="title">Phone </div>
+							<div>
+                                 <input id="phone" name="phone" type="text" id="inputWarning" value="{{ data.userprofile.phone }}">
+                            </div>
+						</div>
+					</div>
+
+                    <div class="task high">
+						<div class="desc">
+							<div class="title">Mobile </div>
+							<div>
+                                 <input id="mobile" name="mobile" type="text" id="inputWarning" value="{{ data.userprofile.mobile }}">
+                            </div>
+						</div>
+					</div>
+
+                    <div class="task high">
+						<div class="desc">
+							<div class="title">Skype </div>
+							<div>
+                                 <input id="skype" name="skype" type="text" id="inputWarning" value="{{ data.userprofile.skype }}">
+                            </div>
+						</div>
+					</div>
+
+                     <div class="task high">
+						<div class="desc">
+							<div class="title">Department </div>
+							<div>
+                                 <input id="department" name="department" type="text" id="inputWarning" value="{{ data.userprofile.department }}">
+                            </div>
+						</div>
+					</div>
+
+                    <div class="task high">
+						<div class="desc">
+							<div class="title">Position </div>
+							<div>
+                                 <input id="position" name="position" type="text" id="inputWarning" value="{{ data.userprofile.position }}">
+                            </div>
+						</div>
+					</div>
+
+                    <div class="task high">
+						<div class="pull-right">
+                            <input type="submit" name="save" class="btn btn-primary default" value="Save">
+                        </div>
+                    </div>
+
+
+					<div class="clearfix"></div>		
+					
+				</div>
+                </form>
+
+
+				<div class="span5 noMarginLeft">
+					
+					<div class="dark">
+					
+					<h1>Timeline</h1>
+					
+					<div class="timeline">
+
+
+                    {% for info in time %}
+
+
+                        <div class="clearfix"></div>
+
+                        <div class="timeslot" style="font-size: 16px">
+                        {{ info.working_date|date:"d-m-Y" }}
+                        <hr>
+                        </div>
+
+                        {% if info.time_out %}
+
+						<div class="timeslot">
+
+							<div class="task">
+					    		<span>
+									<span class="type"></span>
+
+									<span>
+										<span class="remaining">
+											CheckOut
+										</span>
+									</span>
+								</span>
+								<div class="arrow"></div>
+							</div>
+							<div class="icon">
+								<i class="icon-home"></i>
+							</div>
+                            <div class="time">
+								{{ info.time_out|date:"H:i" }}
+							</div>
+					    </div>
+
+                        {% endif %}
+
+                        <div class="clearfix"></div>
+
+                        {% if info.check_in %}
+
+
+                         <div class="timeslot alt">
+
+							<div class="task">
+					    		<span>
+									<span class="details">
+										{{ info.note }}
+									</span>
+									<span>
+										<span class="remaining">
+											CheckIn
+                                        </span>
+									</span>
+								</span>
+								<div class="arrow"></div>
+							</div>
+							<div class="icon">
+								<i class="icon-check"></i>
+							</div>
+
+                            <div class="time">
+								{{ info.check_in|date:"H:i" }}
+							</div>
+
+					    </div>
+                        {% endif %}
+
+                    {% endfor %}
+
+
+					</div>
+				</div>
+				
+				</div>	
+						
+			</div>
+			
+       
+
+	</div><!--/.fluid-container-->
+	
+			<!-- end: Content -->
+		</div><!--/#content.span10-->
+		</div><!--/fluid-row-->
+{% endblock %}
+
+{%  block script %}
+    {% load static %}
+             {% include 'script.html' %}
+
+
+
+{% endblock %}

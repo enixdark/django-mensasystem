@@ -1,0 +1,25 @@
+{% load i18n admin_static bootstrapped_goodies_tags %}
+{% if request.path != '/admin/'%}
+
+ <div data-original-title="" class="box-headeradmin">
+        <h2 id='{{ app.name }}' style="font-size: 16px"><i class="halflings-icon user app-name"></i><span class="break"></span>
+        <a href="{{ app.app_url }}" style="font-size: 16px;font-weight: bold">
+        {% render_with_template_if_exist app.name|lower|add:"/admin_app_name.html" app.name %}
+        </a>
+
+        </h2>
+
+        </div>
+</div>
+{% else %}
+    <a class="quick-button metro yellow span4" href="{{ app.app_url }}" style="font-size: 14px;
+    font-weight: bold;
+    color: #ffffff;
+    margin-bottom: 20px;
+    margin-left: 15px">
+					<i class="icon-group"></i>
+					<p>{{ app.name }}</p>
+	</a>
+
+
+{% endif %}

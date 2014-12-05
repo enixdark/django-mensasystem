@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+{% load message_filter %}
+{% block rightcontent %}
+
+<div id="content" class="span12">
+				<div class="box span12" onTablet="span12" onDesktop="span12">
+					<div class="box-header">
+						<h2><i class="halflings-icon comment"></i><span class="break"></span>Chats</h2>
+						<div class="box-icon">
+							<a href="#" class="btn-minimize"><i class="halflings-icon chevron-up"></i></a>
+							<a href="#" class="btn-close"><i class="halflings-icon remove"></i></a>
+						</div>
+					</div>
+					<div class="box-content">
+						<ul class="chat">
+                            {% for mes in data %}
+							<li class="left">
+								<img class="avatar" alt="Computer" src="img/avatar.jpg">
+
+								<span class="message"><span class="arrow"></span>
+									<span class="from">Computer</span>
+									<span class="time">{{ mes.time|date:"H:i:s d/m/Y" }}</span>
+									<span class="text">
+										{{ mes.message }}
+									</span>
+								</span>
+
+							</li>
+                            {% endfor %}
+						</ul>
+					</div>
+				</div><!--/span-->
+
+<div class="dataTables_paginate paging_bootstrap pagination pagination-centered">
+  <ul class="pagination">
+
+    {% if data.has_previous %}
+      <li><a href="?page={{ data.previous_page_number }}">← Previous</a></li>
+    {% else %}
+      <li class="prev disabled"><a href="#">← Previous</a></li>
+    {% endif %}
+
+    {% for num in data.paginator.page_range %}
+      {% ifequal num data.number %}
+        <li class="active"><a href="#">{{ num }}<span class="sr-only"></span></a></li>
+      {% else %}
+        <li><a href="?page={{ num }}">{{ num }}</a></li>
+      {% endifequal %}
+    {% endfor %}
+
+    {% if data.has_next %}
+      <li><a href="?page={{ data.next_page_number }}">Next → </a></li>
+    {% else %}
+      <li class="disabled"><a href="#">Next → </a></li>
+    {% endif %}
+  </ul>
+</div>
+
+{% endblock %}
+
+{% block script %}
+    {% load static %}
+    {% include 'script.html' %}
+{% endblock %}

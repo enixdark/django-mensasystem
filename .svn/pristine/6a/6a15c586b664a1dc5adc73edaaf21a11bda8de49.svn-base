@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <div class="container hero-unit">
+  <h2>Contact Form</h2>
+  <p>To send us a message fill out the below form.</p>
+  <form method="post">{% csrf_token %}
+    <div class="row">
+    <div class="col-md-2">
+        <label for="name" class="control-label">Name: </label>
+    </div>
+    <div class="col-md-4">
+
+    <input type="text" name="name" class="form-control hasclear">
+    </div>
+    </div>
+    <br>
+
+    <div class="row">
+    <div class="col-md-2">
+        <label for="email" class="control-label">Your e-mail: </label>
+    </div>
+    <div class="col-md-4">
+    <input type="text" name="email" class="form-control hasclear">
+    </div>
+    </div>
+
+    <br>
+
+    <div class="row">
+    <div class="col-md-2">
+        <label for="body" class="control-label">Message: </label>
+    </div>
+    <div class="col-md-6">
+    <textarea name="body" rows="4" cols="50" class="form-control" ></textarea>
+    </div>
+    </div>
+    <br>
+
+    <input type="submit" value="Submit" class="btn btn-default">
+    </div>
+  </form>
+  </div>
+{% endblock content %}

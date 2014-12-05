@@ -1,0 +1,155 @@
+from django.shortcuts import render_to_response, render, HttpResponseRedirect, Http404, HttpResponse, RequestContext, redirect
+from django.views.generic import TemplateView
+from timesheet.models import TimeSheet
+from django.shortcuts import render
+from datetime import date
+from timesheet.models import *
+from dateutil.parser import parse
+# Create your views here.
+
+
+class TimeSheetView(TemplateView):
+    template_name = 'timesheet/timesheet.html'
+    context_object_name = 'context'
+
+    def post(self, request, *args, **kwargs):
+        print('%s' % request.POST.get('checkin'))
+        return render(request, self.template_name, self.get_context_data())
+
+    def get(self, request, *args, **kwargs):
+        print(request.user.username)
+        return render(request, self.template_name, self.get_context_data())
+
+    def get_context_data(self, **kwargs):
+        context = super(TimeSheetView, self).get_context_data(**kwargs)
+        context['timesheet_today'] = TimeSheet.objects.getTimeSheetForToday(
+            self.request.user)
+        context['timesheet_list'] = TimeSheet.objects.getTimeSheetForUser(
+            self.request.user)
+        return context
+
+
+class TimeSheetReportView(TemplateView):
+    template_name = 'timesheet/timesheetreport.html'
+
+    def get_context_data(self, **kwargs):
+        context = TemplateView.get_context_data(self, **kwargs)
+        return context
+
+
+def coming(request, next='/home/'):
+    from timesheet.models import TimeSheet
+    from datetime import datetime, date, timedelta
+    from decimal import Decimal
+
+    def method_payment(punish, method, exp, level):
+        if method == '*':
+            return punish * exp ** level
+        elif method == '+':
+            return punish + exp
+
+
+    if not request.user.is_active:
+        return HttpResponseRedirect(next)
+
+    try:
+        time_working = TimeSheet.objects.all()[0]
+    except TimeSheet.DoesNotExist:
+        return HttpResponseRedirect('/error606/')
+
+    today = date.today()
+
+    punish = TimeSheetMoney.objects.all()[0]
+
+    try:
+        report = Report.objects.get(user=request.user, month=today.month)
+    except Report.DoesNotExist:
+        report = Report(user=request.user, month=today.month, year=today.year)
+
+    try:
+        if today.strftime("%A") in ['Monday']:
+            day = today + timedelta(days=-3)
+        else:
+            day = today + timedelta(days=-1)
+        pre = UserTimeSheet.objects.get(user=request.user, working_date=day)
+    except UserTimeSheet.DoesNotExist:
+        pre = UserTimeSheet()
+
+    try:
+        time = UserTimeSheet.objects.get(
+            user=request.user, working_date__year=today.year, working_date__month=today.month, working_date__day=today.day)
+    except UserTimeSheet.DoesNotExist:
+        time = UserTimeSheet(user=request.user, fines=method_payment(
+            punish.fines_company_late, punish.method, punish.exp, pre.level))
+        report.fines = Decimal(report.fines) + Decimal(time.fines)
+
+    if request.method == 'POST':
+        if 'home' in request.POST:
+            return HttpResponseRedirect(next)
+
+        time.working_date = date.today()
+        if 'checkin' in request.POST:
+            time.check_in = datetime.now()
+            if time.check_in.time() > time_working.morning_time_start:
+                time.status = 'late'
+                time.level = pre.level + 1
+            else:
+                time.status = 'normal'
+                report.fines -= method_payment(
+                    punish.fines_company_late, punish.method, punish.exp, pre.level)
+                time.fines -= method_payment(
+                    punish.fines_company_late, punish.method, punish.exp, pre.level)
+                time.level = 0
+        else:
+            if not time.check_out:
+                time.fines -= punish.fines_home_early
+                report.fines -= punish.fines_home_early
+                if time.status is None:
+                    time.status = 'late'
+                    time.level = pre.level + 1
+                if time.status == 'normal':
+                    time.status = 'good'
+            time.check_out = datetime.now()
+        time.save()
+        report.save()
+        return HttpResponseRedirect('/home/')
+
+    return render_to_response('Coming.html', {'time': time_working, 'user_time': time},
+                              context_instance=RequestContext(request))
+
+
+def get_fines_from_date(request, date):
+    import json
+    from django.core import serializers
+    data = {'fines': 0, 'total_working': 0, 'total_not_working': 0}
+    month = parse(date).month
+    year = parse(date).year
+    try:
+        data['fines'] = float(
+            Report.objects.get(user=request.user, month=month, year=year).fines)
+        db = UserTimeSheet.objects.filter(
+            user=request.user, working_date__month=month, working_date__year=year)
+        data['total_working'] = db.count()
+        data['total_not_working'] = db.filter(special=True).count()
+    except:
+        pass
+
+    return HttpResponse(json.dumps(data, separators=(',', ': ')))
+
+def error_page(request):
+    return render_to_response('time_working.html', {'request': request, 'user': request.user)
+
+def report(request):
+    from datetime import date
+    month = date.today().month
+    year = date.today().year
+    result = Report.objects.filter(month=month, year=year)
+    if not result:
+        for user in User.objects.all():
+            try:
+                report = Report.objects.get(user=user, month=month, year=year)
+            except:
+                report = Report(user=user, month=month, year=year)
+            report.save()
+
+    return render_to_response('report.html', {'request': request, 'user': request.user, 'data': Report.objects.all().order_by('-month')})

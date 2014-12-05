@@ -1,0 +1,21 @@
+#!/bin/bash 
+if [ ! -d "~/mensasystem" ]; then
+	virtualenv ~/mensasystem
+fi
+
+source ~/mensasystem/bin/activate
+# pip install -U django django-contact-form requests django-cronjobs django_countries python-dateutil netifaces
+pip install -r requirements.txt
+/usr/bin/crontab -l > mycron
+echo "0 18 * * 1,2,3,4,5 /bin/bash `pwd`/cron.sh" >> mycron
+/usr/bin/crontab mycron
+
+if [ ! -f "db.sqlite3" ]; then
+	touch db.sqlite3
+fi
+
+python manage.py makemigrations
+python manage.py migrate
+python manage.py runserver
+
+

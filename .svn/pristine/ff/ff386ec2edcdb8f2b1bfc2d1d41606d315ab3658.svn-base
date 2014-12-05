@@ -1,0 +1,209 @@
+{%  extends "base.html" %}
+
+{%  block content %}
+
+
+
+			<!-- start: Main Menu -->
+			<!-- end: Main Menu -->
+
+			<noscript>
+				<div class="alert alert-block span10">
+					<h4 class="alert-heading">Warning!</h4>
+					<p>You need to have <a href="http://en.wikipedia.org/wiki/JavaScript" target="_blank">JavaScript</a> enabled to use this site.</p>
+				</div>
+			</noscript>
+
+			<!-- start: Content -->
+			<div id="content" class="span10">
+
+
+			<ul class="breadcrumb">
+				<li>
+					<i class="icon-home"></i>
+					<a href="/">Home</a>
+					<i class="icon-angle-right"></i>
+				</li>
+				<li>
+					<i class="icon-edit"></i>
+					<a href="/manage/mensasystem/task/">Manage Task</a>
+                    <i class="icon-angle-right"></i>
+
+				</li>
+                <li>
+					<i class="icon-edit"></i>
+					<a href="/manage/mensasystem/task/add/">Add</a>
+				</li>
+			</ul>
+
+			<div class="row-fluid sortable">
+				<div class="box span12">
+					<div class="box-header" data-original-title>
+						<h2><i class="halflings-icon edit"></i><span class="break"></span>Manage Project</h2>
+						<div class="box-icon">
+							<a href="#" class="btn-setting"><i class="halflings-icon wrench"></i></a>
+							<a href="#" class="btn-minimize"><i class="halflings-icon chevron-up"></i></a>
+							<a href="#" class="btn-close"><i class="halflings-icon remove"></i></a>
+						</div>
+					</div>
+					<div class="box-content">
+
+						<form class="form-horizontal" method="POST" action="/manage/mensasystem/task/">
+                        {% csrf_token %}
+						  <fieldset>
+                            <div class="control-group">
+							  <label class="control-label" for="name">Name </label>
+							  <div class="controls">
+								<input name="name" type="text" class="span6 name" id="name"  data-provide="name" value="{{ data.task.name }}">
+							  </div>
+							</div>
+                            <div class="control-group">
+							  <label class="control-label" for="description">Description </label>
+							  <div class="controls">
+								<input name="description" type="text" class="span6 description" id="description"  data-provide="description" value="{{ data.task.description }}">
+							  </div>
+							</div>
+
+                            <div class="control-group">
+
+								<label class="control-label" for="project">Project</label>
+								<div class="controls">
+								  <select id="project" name="project">
+                                    {%  for project in data.project %}
+									<option value="{{ project.id }}">{{ project.name }}</option>
+                                    {% endfor %}
+
+								  </select>
+								</div>
+							</div>
+
+							<div class="control-group">
+							  <label class="control-label" for="actual_start_time">Actual Time</label>
+							  <div class="controls">
+                                <input name="actualStartTime" type="text" data-format="hh:mm" class="input-small clockface-open" placeholder="Actual Start Time" value="{{ data.task.actualStartTime|date:'f' }}">
+                                &MediumSpace;<span class="icon-arrow-right"> </span>&MediumSpace;
+                                <input name="actualEndTime" type="text" id="actual_end_time" data-format="hh:mm" class="input-small clockface-open" placeholder="Actual End Time" value="{{ data.task.actualEndTime|date:'f' }}">
+
+                              </div>
+
+
+							</div>
+
+                            <div class="control-group">
+							  <label class="control-label" for="actual_start_time">Plan Time Clock</label>
+							  <div class="controls">
+                                <input id="planStartTime" name="planStartTime" class="input-medium datepicker"  type="text" value="{{ data.task.planStartTime|date:"d/m/Y" }}">
+                                &MediumSpace;<span class="icon-arrow-right"> </span>&MediumSpace;
+                                <input id="planEndTime" name="planEndTime" class="input-medium datepicker" type="text" value="{{ data.task.planEndTime|date:"d/m/Y" }}">
+
+                              </div>
+
+
+							</div>
+
+							<div class="control-group">
+							  <label class="control-label" for="status">Status</label>
+							  <div class="controls">
+								  <select id="status" name="status">
+
+                                      <option value="active">active</option>
+                                      <option value="pending">pending</option>
+                                      <option value="banned">banned</option>
+
+								  </select>
+                              </div>
+							</div>
+
+                            <div class="control-group">
+
+								<label class="control-label" for="user">User </label>
+								<div class="controls">
+								  <select id="user" name="user">
+                                    {% for user in  data.user %}
+                                      <option value="{{ user.id }}">{{ user.username }}</option>
+                                    {%  endfor %}
+								  </select>
+								</div>
+							</div>
+
+							<div class="form-actions">
+							  <button type="submit" class="btn btn-primary">Save changes</button>
+							  <button type="reset" class="btn">Cancel</button>
+							</div>
+						  </fieldset>
+						</form>
+
+					</div>
+				</div><!--/span-->
+
+			</div><!--/row-->
+
+
+
+
+
+	</div><!--/.fluid-container-->
+
+{% endblock %}
+
+{%  block script %}
+     {%  load static %}
+    {% load static %}
+    <<script src="{% static 'js/jquery-1.9.1.min.js'%}"></script>
+    <script src="{% static 'js/jquery-migrate-1.0.0.min.js'%}"></script>
+
+    <script src="{% static 'js/jquery-ui-1.10.0.custom.min.js'%}"></script>
+
+    <script src="{% static 'js/jquery.ui.touch-punch.js'%}"></script>
+
+    <script src="{% static 'js/modernizr.js'%}"></script>
+
+    <script src="{% static 'js/bootstrap.min.js'%}"></script>
+
+    <script src="{% static 'js/jquery.cookie.js'%}"></script>
+
+    <script src="{% static 'js/fullcalendar.min.js'%}"></script>
+
+    <script src="{% static 'js/jquery.dataTables.min.js'%}"></script>
+
+    <script src="{% static 'js/excanvas.js'%}"></script>
+    <script src="{% static 'js/jquery.flot.js'%}"></script>
+    <script src="{% static 'js/jquery.flot.pie.js'%}"></script>
+    <script src="{% static 'js/jquery.flot.stack.js'%}"></script>
+    <script src="{% static 'js/jquery.flot.resize.min.js'%}"></script>
+
+    <script src="{% static 'js/jquery.chosen.min.js'%}"></script>
+
+    <script src="{% static 'js/jquery.uniform.min.js'%}"></script>
+
+    <script src="{% static 'js/jquery.cleditor.min.js'%}"></script>
+
+    <script src="{% static 'js/jquery.noty.js'%}"></script>
+
+    <script src="{% static 'js/jquery.elfinder.min.js'%}"></script>
+
+    <script src="{% static 'js/jquery.raty.min.js'%}"></script>
+
+    <script src="{% static 'js/jquery.iphone.toggle.js'%}"></script>
+
+    <script src="{% static 'js/jquery.uploadify-3.1.min.js'%}"></script>
+
+    <script src="{% static 'js/jquery.gritter.min.js'%}"></script>
+
+    <script src="{% static 'js/jquery.imagesloaded.js'%}"></script>
+
+    <script src="{% static 'js/jquery.masonry.min.js'%}"></script>
+
+    <script src="{% static 'js/jquery.knob.modified.js'%}"></script>
+
+    <script src="{% static 'js/jquery.sparkline.min.js'%}"></script>
+
+    <script src="{% static 'js/counter.js'%}"></script>
+
+    <script src="{% static 'js/retina.js'%}"></script>
+
+    <script src="{% static 'js/custom.js'%}"></script>
+
+
+{% endblock %}
+

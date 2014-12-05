@@ -1,0 +1,56 @@
+Group
+	Name
+	Description
+	
+User
+	Group
+	Name
+	Email
+	Phone
+	Mobile
+	Skype
+	Department
+	Position
+
+Project
+	Name
+	Description
+	ActualStartTime
+	ActualEndTime
+	PlanStartTime
+	PlanEndTime
+	Status
+	
+Project_User
+	User
+	Project
+
+Task
+	Name
+	Project
+	Description
+	ActualStartTime
+	ActualEndTime
+	PlanStartTime
+	PlanEndTime
+	Status
+	User
+	
+
+TimeSheet
+		    -User
+	CompositeKey|
+		    -Date
+	Time_In
+	Time_Out
+	LengthBreak
+	Total
+	Under
+	Over
+	ApprovedBy(User)
+
+Setting
+	Key
+	Value
+	
+

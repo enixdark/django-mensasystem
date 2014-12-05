@@ -1,0 +1,99 @@
+{% extends 'base.html' %}
+
+{% block rightcontent %}
+
+
+
+	<div id="content" class="span10">
+
+
+			<ul class="breadcrumb">
+				<li>
+					<i class="icon-home"></i>
+					<a href="/home/">Home</a>
+					<i class="icon-angle-right"></i>
+				</li>
+				<li><a href="/profile/{{ user.id }}/result/">Calendar Result</a></li>
+			</ul>
+
+			<div class="row-fluid sortable">
+				<div class="box span12">
+				  <div class="box-header" data-original-title>
+					  <h2><i class="halflings-icon calendar"></i><span class="break"></span>Calendar</h2>
+				  </div>
+
+                  <form id="formfines" name='formfines' method="get">
+
+				  <div class="box-content">
+					<div id="external-events" class="span3">
+
+                    </div>
+
+
+						<div id="calendar" class="span9"></div>
+
+
+						<div class="clearfix"></div>
+					</div>
+
+                 </form>
+				</div>
+			</div><!--/row-->
+
+
+	</div>
+
+
+		</div>
+		</div>
+{% endblock %}
+
+{%  block script %}
+    {% load static %}
+
+    {% include 'script.html' %}
+
+
+    <link href='{% static "css/calendar_css/fullcalendar.css"%}' rel='stylesheet' />
+    <link href='{% static "css/calendar_css/fullcalendar.print.css"%}' rel='stylesheet' media='print' />
+    <script src='{% static "js/calendar_js/moment.min.js"%}'></script>
+    <script src='{% static "js/calendar_js/jquery.min.js"%}'></script>
+    <script src='{% static "js/calendar_js/fullcalendar.min.js"%}'></script>
+    <script>
+
+        $(document).ready(function() {
+
+
+            var event_change = function(){
+                var text = $('.fc-left').text();
+                var url = "/fines/" + text + "/";
+                $.getJSON(url,function(e){
+                    var fines = ' <h3><span class="red">Total Fines :' + e.fines + '</span></h3><h3><spam class="blue">Total Working : ' +
+                            e.total_working + '</span></h3><h3><span class="green">Total Leave : ' + e.total_not_working + '</span></h3>';
+                    $('#external-events').text("");
+                    $('#external-events').append(fines);
+
+
+
+                })
+            }
+            $('#calendar').fullCalendar({
+                defaultDate: Date.now(),
+                editable: true,
+                eventLimit: true,
+                events: {{ time|safe }}
+            });
+
+            $('button').on('click',function () {
+                event_change();
+            });
+
+            event_change();
+
+
+        });
+
+
+
+    </script>
+{% endblock %}

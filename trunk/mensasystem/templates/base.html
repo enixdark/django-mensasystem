@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	
+	<!-- start: Meta -->
+	<meta charset="utf-8">
+	<title>Bootstrap Metro Dashboard by Dennis Ji for ARM demo</title>
+	<meta name="description" content="Bootstrap Metro Dashboard">
+	<meta name="author" content="Dennis Ji">
+	<meta name="keyword" content="Metro, Metro UI, Dashboard, Bootstrap, Admin, Template, Theme, Responsive, Fluid, Retina">
+	<!-- end: Meta -->
+	
+	<!-- start: Mobile Specific -->
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<!-- end: Mobile Specific -->
+	
+	<!-- start: CSS -->
+    {% load filter message_filter  %}
+
+    {%  load static  %}
+	<link id="bootstrap-style" href="{% static 'css/bootstrap.min.css'%}" rel="stylesheet">
+	<link href="{% static 'css/bootstrap-responsive.min.css'%}" rel="stylesheet">
+	<link id="base-style" href="{% static 'css/style.css'%}" rel="stylesheet">
+	<link id="base-style-responsive" href="{% static 'css/style-responsive.css'%}" rel="stylesheet">
+	<link id="base-style-responsive" href="{% static 'css/clockface.css'%}" rel="stylesheet">
+
+    <!-- end: CSS -->
+
+
+	<!-- The HTML5 shim, for IE6-8 support of HTML5 elements -->
+	<!--[if lt IE 9]>
+	  	<script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+		<link id="ie-style" href="{% static 'css/ie.css' %}" rel="stylesheet">
+	<![endif]-->
+	
+	<!--[if IE 9]>
+		<link id="ie9style" href="{% static 'css/ie9.css' %}" rel="stylesheet">
+	<![endif]-->
+		
+	<!-- start: Favicon -->
+	<link rel="shortcut icon" href="img/favicon.ico">
+	<!-- end: Favicon -->
+	
+		
+		
+		
+</head>
+
+<body>
+    <noscript>
+                    <div class="alert alert-block span10">
+                        <h4 class="alert-heading">Warning!</h4>
+                        <p>You need to have <a href="http://en.wikipedia.org/wiki/JavaScript" target="_blank">JavaScript</a> enabled to use this site.</p>
+                    </div>
+                </noscript>
+
+{% block header %}
+    		<!-- start: Header -->
+	<div class="navbar">
+		<div class="navbar-inner">
+			<div class="container-fluid">
+				<a class="btn btn-navbar" data-toggle="collapse" data-target=".top-nav.nav-collapse,.sidebar-nav.nav-collapse">
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+				</a>
+				<a class="brand" href="/home/"><span> <i class="icon-home"></i> <strong>Home</strong></span></a>
+
+				<!-- start: Header Menu -->
+				<div class="nav-no-collapse header-nav">
+
+                <ul class="nav pull-right">
+
+                {% if user.is_superuser %}
+
+                        <li class="dropdown">
+                                <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+                                    <i class="halflings-icon white wrench"></i>
+                                </a>
+                                <ul class="dropdown-menu">
+                                    <li class="dropdown-menu-title">
+                                        <span>Manage Settings</span>
+                                    </li>
+                                    <li><a href="/admin/"><i class="halflings-icon user"></i>Admin Site</a></li>
+                                </ul>
+                        </li>
+                        <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+								<i class="halflings-icon white user"></i> {{ user.username }}
+						</a>
+
+						<ul class="dropdown-menu">
+								<li class="dropdown-menu-title">
+									<span>Account Settings</span>
+								</li>
+								<li><a href="/accounts/logout/"><i class="halflings-icon off"></i> Logout</a></li>
+						</ul>
+
+
+                {% elif user.is_authenticated %}
+
+                        <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+								<i class="halflings-icon white user"></i> {{ user.username }}
+						</a>
+
+                        <li class="dropdown hidden-phone">
+							<a href="#" data-toggle="dropdown" class="btn dropdown-toggle">
+								<i class="halflings-icon white envelope"></i>
+							</a>
+							<ul class="dropdown-menu messages">
+								<li class="dropdown-menu-title">
+ 									<span>Today You have {{ user.email|get_message|length }} messages</span>
+									<a href="#refresh"><i class="icon-repeat"></i></a>
+								</li>
+                                {% for mes in user.email|get_message %}
+                            	<li>
+                                    <a href="#">
+										<span class="avatar"><img alt="Avatar" src="img/avatar.jpg"></span>
+										<span class="header">
+											<span class="from">
+										    	Computer
+										     </span>
+											<span class="time">
+
+										    	{{ mes.time|date:"Y/M/d H:m:s"|convert_time }}
+										    </span>
+										</span>
+                                        <span class="message">
+                                            {{ mes.message|truncatewords:20 }}
+                                        </span>
+                                    </a>
+                                </li>
+                                {% endfor %}
+								<li>
+                            		<a href="/fullview" class="dropdown-menu-sub-footer">View all messages</a>
+								</li>
+							</ul>
+						</li>
+
+						<ul class="dropdown-menu">
+								<li class="dropdown-menu-title">
+									<span>Account Settings</span>
+								</li>
+								<li><a href="/profile/{{ user.id }}/"><i class="halflings-icon user"></i> Profile</a></li>
+                            	<li><a href="/profile/{{ user.id }}/result/"><i class="halflings-icon calendar"></i> Result</a></li>
+
+								<li><a href="/accounts/logout/"><i class="halflings-icon off"></i> Logout</a></li>
+						</ul>
+
+                       
+
+
+                    {%  else %}
+
+                        <ul class="nav pull-right">
+						<!-- start: User Dropdown -->
+							<li>
+                            <a class="btn" href="/accounts/login/">
+								<i class="halflings-icon white user"></i> Login
+							</a></li>
+
+						<!-- end: User Dropdown -->
+                        </ul>
+
+                    {% endif %}
+
+						<!-- end: User Dropdown -->
+					</ul>
+				</div>
+				<!-- end: Header Menu -->
+
+			</div>
+		</div>
+	</div>
+	<!-- start: Header -->
+{%  endblock %}
+
+{%  block content %}
+    <div class="container-fluid-full">
+		<div class="row-fluid">
+    {% block leftcontent %}
+{#        		<div id="sidebar-left" class="span2">#}
+{#				<div class="nav-collapse sidebar-nav">#}
+{##}
+{#				</div>#}
+{#			</div>#}
+        <div id="sidebar-left" class="span2">
+				<div class="nav-collapse sidebar-nav">
+					<ul class="nav nav-tabs nav-stacked main-menu">
+                        {% if user.is_superuser %}
+
+						<li><a href="/admin/sendmessage"><i class="icon-envelope"></i><span class="hidden-tablet"> Send Message</span></a></li>
+					    {% elif  user.is_authenticated %}
+                        <li><a href="/sendmessage"><i class="icon-envelope"></i><span class="hidden-tablet"> Send Message</span></a></li>
+
+                        {% endif %}
+
+                    </ul>
+				</div>
+		</div>
+
+    {% endblock %}
+
+    {% block rightcontent %}
+
+    {% endblock %}
+    </div>
+    </div>
+{%  endblock %}
+
+{% block footer %}
+    <footer>
+
+		<p class="text-center">
+			<span class="text-center">&copy; 2013 <a href="http://jiji262.github.io/Bootstrap_Metro_Dashboard/" alt="Bootstrap_Metro_Dashboard">Bootstrap Metro Dashboard</a></span>
+
+		</p>
+
+	</footer>
+{% endblock %}
+
+{% block script %}
+        {% load static %}
+    {% include 'script.html' %}
+
+{%  endblock %}
+
+</body>
+</html>
+

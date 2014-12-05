@@ -1,0 +1,2 @@
+# set crontab for mensasytem
+0 18 * * 1,2,3,4,5 /bin/bash /home/enixdark/final/mensasystem/trunk/mensasystem/cron.sh
