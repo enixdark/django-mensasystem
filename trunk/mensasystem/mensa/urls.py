@@ -7,9 +7,9 @@ from django.conf import settings
 
 urlpatterns = patterns('',
     # Examples:
-    url(r'^',include('mensa_app.urls')),
-    url(r'^',include('timesheet.urls')),
-    url(r'^',include('message.urls')),
+    url(r'^',include('apps.mensa_app.urls')),
+    # url(r'^',include('apps.timesheet.urls')),
+    # url(r'^',include('apps.message.urls')),
     # url(r'^admin/', include('admins.urls')),
     url(r'^admin/', include(admin.site.urls)),
 )

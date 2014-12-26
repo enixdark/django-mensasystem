@@ -1,17 +1,30 @@
 #! /bin/bash 
 if [ ! -d ~/mensasystem ]; then
-	/usr/bin/virtualenv ~/mensasystem
+	if [ -f /usr/bin/virtualenv ];
+	then
+	    /usr/bin/virtualenv ~/mensasystem
+	else
+	    /usr/local/bin/virtualenv ~/mensasystem
+	fi
 fi
-source ~/mensasystem/bin/activate
+
+. ~/mensasystem/bin/activate
+
 # pip install -U django django-contact-form requests django-cronjobs django_countries python-dateutil netifaces
 pip install -r requirements.txt
 /usr/bin/crontab -l > mycron
 
 cron_text=`pwd`/cron.sh
+cron_check_out_text=`pwd`/cron_check_out.sh
 
 if ! grep -q $cron_text mycron;
-then 
+then
 	echo "0 18 * * 1,2,3,4,5 /bin/bash $cron_text" >> mycron
+fi
+
+if ! grep -q $cron_check_out_text mycron;
+then
+	echo "30 18 * * 1,2,3,4,5 /bin/bash $cron_check_out_text" >> mycron
 fi
 
 /usr/bin/crontab mycron

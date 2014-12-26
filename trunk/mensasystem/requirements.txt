@@ -5,3 +5,4 @@ django-cronjobs==0.2.3
 django_countries==2.1.2
 python-dateutil==2.2
 netifaces==0.10.4
+django-ipware==0.0.8

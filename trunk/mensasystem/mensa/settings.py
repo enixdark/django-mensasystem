@@ -9,6 +9,8 @@ https://docs.djangoproject.com/en/1.7/ref/settings/
 """
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
+
+
 import os
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
@@ -18,6 +20,7 @@ EMAIL_HOST_USER = ""
 EMAIL_PORT = 587
 EMAIL_HOST_PASSWORD = ""
 LIST_OF_EMAIL_RECIPIENTS = ""
+
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.7/howto/deployment/checklist/
 ADMINS = (
@@ -44,8 +47,8 @@ ALLOWED_HOSTS = ['localhost',]
 # Application definition
 
 INSTALLED_APPS = (
-    'admins.bootstrap3',
-    'admins',
+    'apps.admins.bootstrap3',
+    'apps.admins',
     # 'django.contrib.admin.apps.SimpleAdminConfig',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -54,10 +57,10 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     # 'django.contrib.sites',
-    'mensa_app',
-    'timesheet',
-    'system',
-    'message',
+    'apps.mensa_app',
+    'apps.timesheet',
+    'apps.system',
+    'apps.message',
     'cronjobs',
 )
 
@@ -90,6 +93,14 @@ STATICFILES_FINDERS = (
    # 'django.contrib.staticfiles.finders.DefaultStorageFinder',
 )
 
+# MIDDLEWARE_CLASSES = [
+#
+#     'mensa_app.middleware.AutoLogout',
+# ]
+
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+SESSION_COOKIE_AGE = 60*5
+# AUTO_LOGOUT_DELAY = .5
 # Absolute filesystem path to the directory that will hold user-uploaded files.
 # Example: "/home/media/media.lawrence.com/media/"
 # MEDIA_ROOT = '/path/to/mydjangosite/media/'
@@ -151,7 +162,7 @@ DATABASES = {
 
 LANGUAGE_CODE = 'en-us'
 
-# TIME_ZONE = 'Asia/Bangkok'
+TIME_ZONE = 'Asia/Bangkok'
 
 USE_I18N = True
 
@@ -217,7 +228,7 @@ LOGGING = {
 # # CRON_CACHE = 'cron_cache'
 #
 CRON_CLASSES = [
-    "mensa_app.cron.MyCronJob",
+    "apps.mensa_app.cron.MyCronJob",
     # ...
 ]
 

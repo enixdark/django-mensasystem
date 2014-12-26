@@ -10,7 +10,7 @@
 			<ul class="breadcrumb">
 				<li>
 					<i class="icon-home"></i>
-					<a href="/home/">Home</a>
+					<a href="/dashboard/">Dashboard</a>
 					<i class="icon-angle-right"></i>
 				</li>
 				<li><a href="/profile/{{ user.id }}/result/">Calendar Result</a></li>
@@ -68,8 +68,8 @@
                 var text = $('.fc-left').text();
                 var url = "/fines/" + text + "/";
                 $.getJSON(url,function(e){
-                    var fines = ' <h3><span class="red">Total Fines :' + e.fines + '</span></h3><h3><spam class="blue">Total Working : ' +
-                            e.total_working + '</span></h3><h3><span class="green">Total Leave : ' + e.total_not_working + '</span></h3>';
+                    var fines = ' <h3><span class="red">Tổng Tiền Phạt :' + e.fines + '</span></h3><h3><spam class="blue">Tổng Số Ngày Làm Vịêc : ' +
+                            e.total_working + '</span></h3><h3><span class="green">Tổng Số Ngày Xin Nghỉ : ' + e.total_not_working + '</span></h3>';
                     $('#external-events').text("");
                     $('#external-events').append(fines);
 

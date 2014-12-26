@@ -1,31 +1,100 @@
 {% extends 'base.html' %}
 
-{% block rightcontent %}
-			<noscript>
-				<div class="alert alert-block span10">
-					<h4 class="alert-heading">Warning!</h4>
-					<p>You need to have <a href="http://en.wikipedia.org/wiki/JavaScript" target="_blank">JavaScript</a> enabled to use this site.</p>
-				</div>
-			</noscript>
 
-			<!-- start: Content -->
-			<div id="content" class="span10" style="min-height: 850px;">
+
+{% block rightcontent %}
+
+
+
+
+            {% if user.is_authenticated %}
+                	<div id="content" class="span10">
+
 
 			<ul class="breadcrumb">
 				<li>
 					<i class="icon-home"></i>
-					<a href="{% url 'home' %}">Home</a>
+					<a href="/dashboard/">Dashboard</a>
 					<i class="icon-angle-right"></i>
 				</li>
-
 			</ul>
+
+			<div class="row-fluid sortable">
+				<div class="box span12">
+				  <div class="box-header" data-original-title>
+					  <h2><i class="halflings-icon calendar"></i><span class="break"></span>Calendar</h2>
+				  </div>
+
+                  <form id="formfines" name='formfines' method="get">
+
+				  <div class="box-content">
+					<div id="external-events" class="span3">
+
+                    </div>
+
+
+						<div id="calendar" class="span9"></div>
+
+
+						<div class="clearfix"></div>
+					</div>
+
+                 </form>
+				</div>
+			</div><!--/row-->
+
+
+	</div>
+
+            {% endif %}
 {% endblock %}
 
 
 {% block script %}
         {% load static %}
         {% include 'script.html' %}
+        <link href='{% static "css/calendar_css/fullcalendar.css"%}' rel='stylesheet' />
+    <link href='{% static "css/calendar_css/fullcalendar.print.css"%}' rel='stylesheet' media='print' />
+    <script src='{% static "js/calendar_js/moment.min.js"%}'></script>
+    <script src='{% static "js/calendar_js/jquery.min.js"%}'></script>
+    <script src='{% static "js/calendar_js/fullcalendar.min.js"%}'></script>
+    <script>
 
+        $(document).ready(function() {
+
+
+            var event_change = function(){
+                var text = $('.fc-left').text();
+                var url = "/fines/" + text + "/";
+                $.getJSON(url,function(e){
+                    var fines = ' <h3><span class="red">Tổng Tiền Phạt :' + e.fines + '</span></h3><h3><spam class="blue">Tổng Số Ngày Làm Vịêc : ' +
+                            e.total_working + '</span></h3><h3><span class="green">Tổng Số Ngày Xin Nghỉ : ' + e.total_not_working + '</span></h3>';
+                    $('#external-events').text("");
+                    $('#external-events').append(fines);
+
+
+
+                })
+            }
+            $('#calendar').fullCalendar({
+                defaultDate: Date.now(),
+                editable: true,
+                eventLimit: true,
+                events: {{ time|safe }}
+            });
+
+            $('button').on('click',function () {
+                event_change();
+            });
+
+            event_change();
+
+
+        });
+
+
+
+    </script>
 {% endblock %}
 	
 

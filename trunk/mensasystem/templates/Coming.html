@@ -6,13 +6,14 @@
 	<meta name="description" content="">
 	<meta name="author" content="">
 
-	<title>Cortes - Coming Soon Template</title>
+	<title> MensaSystem </title>
 
 	<!-- CSS -->
 	<!-- Bootstrap core CSS -->
 	{% load static %}
-	<link href="{% static 'css/time_css/bootstrap.css'%}" rel="stylesheet" media="screen">
-
+	<!--<link href="{% static 'css/time_css/bootstrap.css'%}" rel="stylesheet" media="screen">-->
+<link rel="stylesheet" type="text/css" href="{% static 'js/a_data/bootstrap.css" media="screen'%}">
+	<link rel="stylesheet" type="text/css" href="{% static 'js/a_data/styles.css'%}">
 	<!-- Font Awesome CSS -->
 	<link href="{% static 'css/time_css/font-awesome.css'%}" rel="stylesheet" media="screen">
 
@@ -40,52 +41,68 @@
 
 					<div class="i_header">
 						<div class="logo">
-							<img src="{% static 'img/time_img/logo.png' %}" alt="">
+							<a href="/dashboard/"><img src="{% static 'img/time_img/logo.png' %}" alt=""></a>
 						</div>
+
 						<h1>Mensa System</h1>
-
 					</div>
-				
-{#					<div class="i_cicle">#}
-{#						<!-- Timer: Your date here -->#}
-{#						<div data-tc-id="f08d1e55-134c-7eb9-e3e7-ab5f007b3e52" class="countdown-time animated bounceIn" data-date="2015-01-01 00:00:00" data-timer="100">#}
-{#                            <div class="time_circles">#}
-{#                           <canvas height="195" width="590">#}
-{##}
-{#                            </canvas>#}
-{#                                <div style="top: 68px; left: 195px; width: 195px;" class="textDiv_Hours">#}
-{#                                    <h4 style="font-size: 14px; line-height: 14px;">Hours#}
-{#                                </h4>#}
-{#                                    <span style="font-size: 41px; line-height: 14px;">8</span>#}
-{#                                </div>#}
-{##}
-{#                                <div style="top: 68px; left: 390px; width: 195px;" class="textDiv_Minutes">#}
-{#                                    <h4 style="font-size: 14px; line-height: 14px;">Minutes</h4>#}
-{#                                    <span style="font-size: 41px; line-height: 14px;">55</span>#}
-{#                                </div><div style="top: 68px; left: 585px; width: 195px;" class="textDiv_Seconds">#}
-{#                                    <h4 style="font-size: 14px; line-height: 14px;">Seconds</h4>#}
-{#                                    <span style="font-size: 41px; line-height: 14px;">28</span></div>#}
-{#                            </div>#}
-{#                        </div>#}
-{#					</div>#}
 
-                    <form action="" method="POST" name="checkin">
+
+                <form action="" method="POST" name="checkin" >
+                    <ul class="row count-down">
+
                     {% csrf_token %}
                     <div id="demo">
 
                     </div>
+				<li class="col-md-4 col-sm-6">
+					<div style="display:inline;width:260px;height:260px; margin-right: 20px;">
+                        <div style="display:inline;width:260px;height:260px; margin-right: 20px;">
+                            <input data-angleoffset="180" data-bgcolor="#e1e2e6" data-fgcolor="#4cd964" data-thickness="0.07" data-height="260" data-width="260" data-max="24" data-min="0" data-readonly="true" class="knob hour" readonly="readonly" style="width: 134px; height: 86px; position: absolute; vertical-align: middle; margin-top: 86px; margin-left: -197px; border: 0px none; background: none repeat scroll 0% 0% transparent; font: bold 65px Arial; text-align: center; color: rgb(76, 217, 100); padding: 0px;" value="18"></div></div>
+					<span id="hours-title">hours</span>
+				</li>
+				<li class="col-md-4 col-sm-6">
+					<div style="display:inline;width:260px;height:260px; margin-right: 20px;">
+                        <div style="display:inline;width:260px;height:260px; margin-right: 20px;">
+                            <input data-angleoffset="180" data-bgcolor="#e1e2e6" data-fgcolor="#ff9500" data-thickness="0.07" data-height="260" data-width="260" data-max="60" data-min="0" data-readonly="true" class="knob minute" readonly="readonly" style="width: 134px; height: 86px; position: absolute; vertical-align: middle; margin-top: 86px; margin-left: -197px; border: 0px none; background: none repeat scroll 0% 0% transparent; font: bold 65px Arial; text-align: center; color: rgb(255, 149, 0); padding: 0px;" value="54"></div></div>
+					<span id="mins-title">minutes</span>
+				</li>
+				<li class="col-md-4 col-sm-6">
+					<div style="display:inline;width:260px;height:260px; margin-right: 20px;">
+                        <div style="display:inline;width:260px;height:260px; margin-right: 20px;">
+                            <input data-angleoffset="180" data-bgcolor="#e1e2e6" data-fgcolor="#ff3b30" data-thickness="0.07" data-height="260" data-width="260" data-max="60" data-min="0" data-readonly="true" class="knob second" readonly="readonly" style="width: 134px; height: 86px; position: absolute; vertical-align: middle; margin-top: 86px; margin-left: -197px; border: 0px none; background: none repeat scroll 0% 0% transparent; font: bold 65px Arial; text-align: center; color: rgb(255, 59, 48); padding: 0px;" value="42"></div></div>
+					<span id="secs-title">seconds</span>
+				</li>
+			</ul>
+
                     </form>
-                    <div class="i_header">
-                        <br>
-                        <br>
-                        <br>
-                        <br>
-                        <br>
-                        <br>
-					</div>
 				</div>
 			</div>
 		</div>
+
+<!-- Modal -->
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+            <h4 class="modal-title" id="myModalLabel" style="color:#595959">Thông Báo</h4>
+          </div>
+          <div class="modal-body" style="color:#595959">
+            Bạn có chắc chắn muốn Check out không ?
+          </div>
+          <div class="modal-footer">
+            <form action="" method="POST">
+            <button type="button" class="btn btn-primary" data-dismiss="modal" style="font-size:12px;padding:10px 15px">Cancel</button>
+
+                {% csrf_token %}
+                <button type="submit" name="checkout" class="btn btn-primary" style="font-size:12px;padding:10px 15px">Confirm</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
 
 	<!-- Intro section end -->
 
@@ -110,6 +127,67 @@
 	<script src="{% static 'js/time_js/smoothscroll.js'%}"></script>
 	<!-- Custom scripts -->
 	<script src="{% static 'js/time_js/custom.js'%}"></script>
+
+
+    <script type="text/javascript" src="{% static 'js/a_data/jquery_002.js' %}"></script>
+    <script src="{% static 'js/a_data/modernizr.js' %}"></script>
+
+        {% load timesheet_filter %}
+        <script>
+
+        (function($) {
+
+        $.fn.ccountdown = function(_yr, _m, _d, _t) {
+        var $this = this;
+        var _day = new Date()
+        var _today = new Date(_day.getYear(),_day.getMonth(),_day.getDay(),
+                "{{ 'hour'|get_time}}","{{ 'minutes'|get_time}}","{{ 'seconds'|get_time}}");
+        // calling function first time so that it wll setup remaining time
+        var _changeTime = function() {
+
+
+        var _todaysec = _today.getSeconds();
+
+        _today.setSeconds(_todaysec + 1);
+        if ( _today.getSeconds() >= 60 ){
+
+            _today.setSeconds(0);
+            _today.setMinutes(_todaymin + 1);
+
+        }
+
+        if ( _today.getMinutes() >= 60 ){
+            _today.setMinutes(0);
+            _today.setHours(_todayh + 1);
+        }
+
+        if ( _today.getHours() >= 24 ){
+            _today.setHours(0);
+        }
+        var _todayh = _today.getHours();
+        var _todaymin = _today.getMinutes();
+        _todaysec = _today.getSeconds()
+        _dhour = Math.floor(_todayh);
+        _dmin = Math.floor(_todaymin);
+        _dsec = Math.floor(_todaysec);
+        var el = $($this);
+        var $ss = el.find(".second"), $mm = el.find(".minute"), $hh = el.find(".hour");
+
+        $ss.val(_dsec).trigger("change");
+        $mm.val(_dmin).trigger("change");
+        $hh.val(_dhour).trigger("change");
+        };
+        _changeTime();
+        setInterval(_changeTime, 1000);
+        };
+
+        })(jQuery);
+
+        </script>
+		<script src="{% static 'js/a_data/jquery_004.js' %}"></script>
+		<script src="{% static 'js/a_data/init.js' %}"></script>
+		<script src="{% static 'js/a_data/general.js' %}"></script>
+
     {% load timesheet_filter %}
 
     <script>
@@ -121,8 +199,8 @@
     }
     </script>
 
-<div style="left: 0px; top: 0px; overflow: hidden; margin: 0px; padding: 0px; z-index: -999999; position: fixed; width: 1354px; height: 630px;" class="backstretch">
-    <img src="{% static 'img/time_img/bg3.jpg'%}" style="position: absolute; margin: 0px; padding: 0px; border: medium none; max-height: none; max-width: none; z-index: -999999; width: 1354px; height: 759.509px; left: 0px; top: -64.7547px;">
+    <div style="left: 0px; top: 0px; overflow: hidden; margin: 0px; padding: 0px; z-index: -999999; position: fixed; width: 1354px; height: 630px;" class="backstretch">
+        <img src="{% static 'img/time_img/bg3.jpg'%}" style="position: absolute; margin: 0px; padding: 0px; border: medium none; max-height: none; max-width: none; z-index: -999999; width: 1354px; height: 759.509px; left: 0px; top: -64.7547px;">
     </div>
 </body>
 </html>

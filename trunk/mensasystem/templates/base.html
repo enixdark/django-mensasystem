@@ -4,7 +4,7 @@
 	
 	<!-- start: Meta -->
 	<meta charset="utf-8">
-	<title>Bootstrap Metro Dashboard by Dennis Ji for ARM demo</title>
+	<title>Mensa System</title>
 	<meta name="description" content="Bootstrap Metro Dashboard">
 	<meta name="author" content="Dennis Ji">
 	<meta name="keyword" content="Metro, Metro UI, Dashboard, Bootstrap, Admin, Template, Theme, Responsive, Fluid, Retina">
@@ -15,9 +15,8 @@
 	<!-- end: Mobile Specific -->
 	
 	<!-- start: CSS -->
-    {% load filter message_filter  %}
+    {% load static filter message_filter timesheet_filter bootstrapped_goodies_tags  %}
 
-    {%  load static  %}
 	<link id="bootstrap-style" href="{% static 'css/bootstrap.min.css'%}" rel="stylesheet">
 	<link href="{% static 'css/bootstrap-responsive.min.css'%}" rel="stylesheet">
 	<link id="base-style" href="{% static 'css/style.css'%}" rel="stylesheet">
@@ -64,7 +63,22 @@
 					<span class="icon-bar"></span>
 					<span class="icon-bar"></span>
 				</a>
-				<a class="brand" href="/home/"><span> <i class="icon-home"></i> <strong>Home</strong></span></a>
+
+                {% if user.is_authenticated %}
+                    {% if user.id|is_checkin %}
+                        <a class="brand" href="/"><span><strong>Check In</strong></span></a>
+                    {% elif user.id|is_checkout %}
+                        <a class="brand" href="/"><span><strong>Check Out</strong></span></a>
+                    {% else %}
+                        <a class="brand" href="/"><span><strong>Home</strong></span></a>
+                    {% endif %}
+                {% endif %}
+
+
+
+
+
+				<a class="brand" href="/dashboard/"><span> <strong>Dashboard</strong></span></a>
 
 				<!-- start: Header Menu -->
 				<div class="nav-no-collapse header-nav">
@@ -73,17 +87,7 @@
 
                 {% if user.is_superuser %}
 
-                        <li class="dropdown">
-                                <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
-                                    <i class="halflings-icon white wrench"></i>
-                                </a>
-                                <ul class="dropdown-menu">
-                                    <li class="dropdown-menu-title">
-                                        <span>Manage Settings</span>
-                                    </li>
-                                    <li><a href="/admin/"><i class="halflings-icon user"></i>Admin Site</a></li>
-                                </ul>
-                        </li>
+
                         <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
 								<i class="halflings-icon white user"></i> {{ user.username }}
 						</a>
@@ -140,9 +144,6 @@
 								<li class="dropdown-menu-title">
 									<span>Account Settings</span>
 								</li>
-								<li><a href="/profile/{{ user.id }}/"><i class="halflings-icon user"></i> Profile</a></li>
-                            	<li><a href="/profile/{{ user.id }}/result/"><i class="halflings-icon calendar"></i> Result</a></li>
-
 								<li><a href="/accounts/logout/"><i class="halflings-icon off"></i> Logout</a></li>
 						</ul>
 
@@ -175,21 +176,25 @@
 {%  endblock %}
 
 {%  block content %}
-    <div class="container-fluid-full">
+    <div class="container-fluid-full ">
 		<div class="row-fluid">
     {% block leftcontent %}
-{#        		<div id="sidebar-left" class="span2">#}
-{#				<div class="nav-collapse sidebar-nav">#}
-{##}
-{#				</div>#}
-{#			</div>#}
+
         <div id="sidebar-left" class="span2">
 				<div class="nav-collapse sidebar-nav">
 					<ul class="nav nav-tabs nav-stacked main-menu">
+
                         {% if user.is_superuser %}
 
+                        {% if request.path|is_admin %}
+                        <li class="active"><a href="/admin/"><i class="halflings-icon user"></i>Admin Site</a></li>
+                        {% else %}
+                        <li><a href="/admin/"><i class="halflings-icon user"></i>Admin Site</a></li>
+                        {% endif %}
+                        <li><a href="/profile/{{ user.id }}/"><i class="halflings-icon user"></i> Profile</a></li>
 						<li><a href="/admin/sendmessage"><i class="icon-envelope"></i><span class="hidden-tablet"> Send Message</span></a></li>
-					    {% elif  user.is_authenticated %}
+                        {% elif  user.is_authenticated %}
+                        <li><a href="/profile/{{ user.id }}/"><i class="halflings-icon user"></i> Profile</a></li>
                         <li><a href="/sendmessage"><i class="icon-envelope"></i><span class="hidden-tablet"> Send Message</span></a></li>
 
                         {% endif %}
@@ -211,18 +216,20 @@
     <footer>
 
 		<p class="text-center">
-			<span class="text-center">&copy; 2013 <a href="http://jiji262.github.io/Bootstrap_Metro_Dashboard/" alt="Bootstrap_Metro_Dashboard">Bootstrap Metro Dashboard</a></span>
+			<span class="text-center"> &copy; 2014 Nextg Solutions </span>
 
 		</p>
 
 	</footer>
-{% endblock %}
 
-{% block script %}
-        {% load static %}
-    {% include 'script.html' %}
+        {% endblock %}
 
-{%  endblock %}
+        {% block script %}
+            {% include 'script.html' %}
+
+        {%  endblock %}
+
+
 
 </body>
 </html>

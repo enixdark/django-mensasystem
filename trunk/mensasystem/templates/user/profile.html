@@ -1,24 +1,18 @@
 {% extends 'base.html' %}
 
 {%  block rightcontent %}
-<body>
-
 		<div class="container-fluid-full">
 		<div class="row-fluid">
-				
 
 
-
-
-			
 			<!-- start: Content -->
 			<div id="content" class="span10">
-			
-						
+
+
 			<ul class="breadcrumb">
 				<li>
 					<i class="icon-home"></i>
-					<a href="/">Home</a>
+					<a href="/dashboard/">Dashboard</a>
 					<i class="icon-angle-right"></i>
 				</li>
 				<li><a href="/profile/{{ data.id }}">Profile</a></li>
@@ -29,10 +23,21 @@
                     {% csrf_token %}
 				<div class="span6">
 					<h1>Profile</h1>
-					
+
 					<div class="priority high">
                             <span>Information</span>
                     </div>
+                    <div class="task high">
+						<div class="desc">
+							<div class="title">Username</div>
+							<div>
+                                <div class="row-fluid">
+                                 <input placeholder="First Name" id="username" name="username" type="text" id="inputWarning" value="{{ data.username }}">
+                                </div>
+                            </div>
+						</div>
+					</div>
+
 					<div class="task high">
 						<div class="desc">
 							<div class="title">Name</div>
@@ -106,18 +111,18 @@
                     </div>
 
 
-					<div class="clearfix"></div>		
-					
+					<div class="clearfix"></div>
+
 				</div>
                 </form>
 
 
 				<div class="span5 noMarginLeft">
-					
+
 					<div class="dark">
-					
+
 					<h1>Timeline</h1>
-					
+
 					<div class="timeline">
 
 
@@ -151,7 +156,7 @@
 								<i class="icon-home"></i>
 							</div>
                             <div class="time">
-								{{ info.time_out|date:"H:i" }}
+								{{ info.check_out|date:"H:i" }}
 							</div>
 					    </div>
 
@@ -193,15 +198,15 @@
 
 					</div>
 				</div>
-				
-				</div>	
-						
+
+				</div>
+
 			</div>
-			
-       
+
+
 
 	</div><!--/.fluid-container-->
-	
+
 			<!-- end: Content -->
 		</div><!--/#content.span10-->
 		</div><!--/fluid-row-->
@@ -209,8 +214,5 @@
 
 {%  block script %}
     {% load static %}
-             {% include 'script.html' %}
-
-
-
+    {% include 'script.html' %}
 {% endblock %}

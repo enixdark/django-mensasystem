@@ -1,0 +1,131 @@
+{% extends "admin/base_site.html" %}
+{% load i18n admin_static bootstrapped_goodies_tags %}
+
+{% block extrastyle %}{{ block.super }}<link rel="stylesheet" type="text/css" href="{% static "admin/css/dashboard.css" %}" />{% endblock %}
+
+{% block coltype %}colMS{% endblock %}
+
+{% block bodyclass %}dashboard{% endblock %}
+
+{% block breadcrumbs %}
+<ul class="breadcrumb">
+<li>{% trans 'Home' %}</li>
+</ul>
+{% endblock %}
+
+{% block object-tools %}
+<ul class="nav navbar-nav">
+    <li class="dropdown">
+        <a href="#" class="dropdown-toggle" data-toggle="dropdown">{% trans "Applications" %} <span class="caret"></span></a>
+        <ul class="dropdown-menu" role="menu">
+            {% for app in app_list %}
+            <li class="dropdown-submenu">
+                <a href="#">{% render_with_template_if_exist app.name|lower|add:"/admin_app_name.html" app.name %}</a>
+                <ul class="dropdown-menu">
+                {% for model in app.models %}
+                    <li>
+                        {% if model.admin_url %}
+                            <a href="{{ model.admin_url }}">{{ model.name }}</a>
+                        {% else %}
+                            {{ model.name }}
+                        {% endif %}
+                    </li>
+                {% endfor %}
+                </ul>
+            </li>
+            {% endfor %}
+        </ul>
+    </li>
+</ul>
+{% endblock %}
+
+
+{% block content %}
+<div class="row-fluid">
+    <div id="content-main" class="span12">
+
+            {% if request.path != '/admin/'%}
+            {% for app in app_list %}
+
+                {% include "admin/bootstrapped_extra/app_name.html" %}
+
+                {% render_with_template_if_exist app.name|lower|add:"/admin_app_description.html" "" %}
+
+                <table summary="{% blocktrans with name=app.name %}Models available in the {{ name }} application.{% endblocktrans %}"
+                       class="container table table-striped table-bordered bootstrap-datatable" style="border-style:none">
+
+                    {% for model in app.models %}
+
+                    <tr>
+                        <th scope="row-fluid">
+                            {% if model.admin_url %}
+                            <a href="{{ model.admin_url }}">{{ model.name }}</a>
+                            {% else %}
+                            {{ model.name }}
+                            {% endif %}
+                        </th>
+
+                        <th scope="row-fluid">
+                            {% if model.object_name  == 'Report' %}
+
+                                Thống kê thông tin về tình trạng tiền phạt theo tháng
+
+                            {% elif model.object_name == 'UserTimeSheet' %}
+                                Hiển thị thông tin về thời gian check in , Check out , tiền phạt của từng user theo ngày
+
+                            {% elif model.object_name == 'TimeWorking' %}
+
+                                Cập nhật ngày nghỉ cho user , nếu họ xin phép nghỉ
+
+                            {% elif model.object_name == 'TimeSheet' %}
+
+                                Thiết lập về thời gian làm việc của công ty
+                            {% elif model.object_name == 'TimeSheetMoney' %}
+
+                                Thiết lập tiền phạt
+                            {% elif model.object_name  == 'SystemIP' %}
+                                Thiết lập , chỉnh sửa IP
+                            {% elif model.object_name  == 'User' %}
+                                Cập nhật, Chỉnh sửa , Taọ và phân quyền cho user
+                            {% elif model.object_name  == 'Group' %}
+                                Thiết lập giới hạn quyền cho từng user thuộc Group
+                            {%endif %}
+
+
+                        </th>
+
+                    </tr>
+
+                {% endfor %}
+                    <tr>
+                        <th scope="row-fluid">
+                            <a href="{% url 'report_week'%}">Báo Cáo</a>
+
+                        </th>
+                        <th scope="row-fluid">
+                            Báo Cáo Thống Kế , Hiển Thị Thông Tin về tình trạng tiền phạt theo Tuần
+                        </th>
+
+                    </tr>
+                </table>
+            {% empty %}
+                <p>{% trans "You don't have permission to edit anything." %}</p>
+            {% endfor %}
+
+            {%  else %}
+
+                {% for app in app_list %}
+
+                {% include "admin/bootstrapped_extra/app_name.html" %}
+
+                {% endfor %}
+
+            {% endif %}
+            </div>
+    </div>
+</div>
+</div>
+{% endblock %}
+
+{% block sidebar %}
+{% endblock %}
